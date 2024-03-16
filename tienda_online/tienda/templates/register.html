@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Registrarse</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Crea tu usuario ...</p>
+        </div>
+    </div>
+</header> 
+<div class="container"> 
+    <div class="row"> 
+        <center> 
+            <div class="mb-3"> 
+                <br/><br/> 
+                <form method="POST" action="{% url 'register' %}"> 
+                    {% csrf_token %}
+                    <div style="width:30%; margin:auto;"> 
+                        <br/><br/> 
+                        {{ form|crispy }}   
+                        <br/><br/> 
+                        <button type="submit" class="btn btn-secondary">Registrarse</button>
+                    </div>
+                </form>
+                <br/><br/>  
+                <br/><br/>  
+                <br/><br/>  
+                <br/><br/>  
+            </div> 
+        </center> 
+    </div> 
+</div>
+{% endblock %}
+
+
+<style>
+    
