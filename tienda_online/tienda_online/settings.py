@@ -10,8 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path 
+from pathlib import Path
 import os
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +30,9 @@ SECRET_KEY = 'django-insecure-c-1y-m+*w&!sm502_*wdfbn5z8^*308!sxyt5nl+od(+p3b607
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED HOSTS
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -37,10 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', 
-    'tienda',  
+    'django.contrib.staticfiles',
+    'tienda',
     'crispy_forms',
-    'crispy_bootstrap4', 
+    'crispy_bootstrap4',
     'cart'
 ]
 
@@ -59,15 +65,15 @@ ROOT_URLCONF = 'tienda_online.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [ 
+            'context_processors': [
                 'cart.procesador.importe_total_carro',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages', 
+                'django.contrib.messages.context_processors.messages',
                 'cart.context_processors.cart',
             ],
         },
@@ -122,16 +128,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'  
-STATICFILES_DIRS=['static/']
+STATIC_URL = 'static/'
+STATICFILES_DIRS = ['static/']
 
-MEDIA_URL='media/' 
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
+# Crispy
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
