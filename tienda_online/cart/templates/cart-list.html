@@ -1,0 +1,212 @@
+
+
+
+
+
+<main class ="cart-list" id="cart-list">
+<section class="h-100 gradient-custom">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center my-4">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Número de Artículos - {{ totalcartitems }} Arículos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for product_id, item in cart_data.items %}
+                        <!-- Single item -->
+                        <div class="row align-items-center">
+                            <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                <!-- Image -->
+                                <div class="bg-image hover-overlay hover-zoom ripple rounded"
+                                    data-mdb-ripple-color="light">
+                                    <img src="{{ item.image }}" class="w-100" alt="Blue Jeans Jacket" />
+                                    <a href="#!">
+                                        <div class="mask"
+                                            style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                    </a>
+                                </div>
+                                <!-- Image -->
+                            </div>
+
+                            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                <!-- Data -->
+                                <p><strong>{{ item.title }}</strong></p>
+                                <p>Precio por unidad: <span class="fs-5 product-price">{{ item.price }}</span></p>  
+                                <p>Precio total: <span class="fs-5 product-total-price" id="product-total-price_{{ product_id }}">{{ item.total_price }}</span></p>
+                                <p>Cantidad: 
+                                    <span class="fs-5 product-qty" value="{{ item.qty }}">{{ item.qty }}</span>
+                    
+                                </p>
+                                <!-- Resto del contenido -->
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                                <!-- Quantity --> 
+                                <div class="d-flex mb-4 align-items-center" style="max-width: 300px">
+                                    <form method="POST" action="{% url 'update-cart' %}"> 
+                                        {% csrf_token %}
+                                        {% csrf_token %}
+                                        <!-- Aquí va el resto del código de tu producto -->
+                                    
+                                        <div class="d-flex mb-4 align-items-center" style="max-width: 300px; margin-left: -30px;">
+                                            <button type="submit" name="action" value="subtract" class="btn btn-primary px-3 me-2 minus-btn">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                    
+                                            <input type="hidden" name="product_id" value="{{ product_id }}">
+                                            <div class="form-outline">
+                                                <input min="0" name="product_qty" value="{{ item.qty }}" type="number" id="product-qty" class="product-qty" />
+                                            </div>
+                                    
+                                            <button type="submit" name="action" value="add" class="btn btn-primary px-3 ms-2">
+                                                <i class="fas fa-plus"></i>
+                                            </button> 
+                                        
+                                        </div>
+                                    </form>
+                                    
+
+                                    
+
+                                    
+                                </div>
+                                <!-- Quantity -->
+                                <div>
+                                    <button type="button" class="btn btn-danger btn-sm mb-2 delete-btn" 
+                                        data-mdb-toggle="tooltip" title="Remove item" data-product={{product_id}} id="delete-btn">
+                                        <i class="fas fa-trash"></i> Eliminarr Artículo
+                                    </button> 
+                                
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Single item -->
+
+                        <hr class="my-4" />
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Resumen de Compra</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                Productos
+                                <span>${{cart_total_amount}}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Envío
+                                <span>Gratis</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                <div>
+                                    <strong>Total</strong>
+                                    <strong>
+                                        <p class="mb-0">(incluyendo IVA)</p>
+                                    </strong>
+                                </div>
+                                <span><strong>${{cart_total_amount}}</strong></span>
+                            </li>
+                        </ul>
+
+                        <button type="button" class="btn btn-primary btn-lg btn-block">
+                            Ir al checkout
+                        </button>
+                    </div>
+                </div>
+                <div class="card mb-4 mb-lg-0">
+                    <div class="card-body">
+                        <p><strong>Aceptamos:</strong></p>
+                        <img class="me-2" width="45px"
+                            src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+                            alt="Visa" />
+                        <img class="me-2" width="45px"
+                            src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+                            alt="American Express" />
+                        <img class="me-2" width="45px"
+                            src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+                            alt="Mastercard" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 
+</main>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script> 
+    $(".delete-btn").on("click",function(){  
+    let product_id= $(this).attr("data-product") 
+    let this_val=$(this) 
+
+    console.log("Product id: ", product_id);
+   
+
+    $.ajax({ 
+        url: '/delete-product' , 
+        data: { 
+            'id':product_id ,
+
+        }, 
+        dataType: 'json' ,
+        beforeSend: function(){ 
+            this_val.hide()
+        }, 
+        success: function(response){ 
+            this_val.show() 
+            $("#cart-items-count").text(response.totalcartitems) 
+            $(".cart-list").html(response.data)
+        }, 
+
+    })
+
+
+
+
+}) 
+</script> 
+
+
+<script> 
+    $(document).on("click", '.update-btn', function(){  
+    let product_id= $(this).attr("data-product") 
+    let this_val=$(this)  
+    let product_quantity=$("#product-qty"+product_id).val()
+
+    console.log("Product id: ", product_id); 
+    console.log("QTY: ",product_quantity)
+   
+
+    $.ajax({ 
+        url: '/update-cart' , 
+        data: { 
+            'id':product_id , 
+            'qty':product_quantity ,
+
+        }, 
+        dataType: 'json' ,
+        beforeSend: function(){ 
+            this_val.hide()
+        }, 
+        success: function(response){ 
+            this_val.show() 
+            $("#cart-items-count").text(response.totalcartitems) 
+            $(".cart-list").html(response.data)
+        }, 
+
+    })
+
+
+
+
+}) 
+</script>
+
+
+

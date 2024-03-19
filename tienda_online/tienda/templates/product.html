@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Shop Item - Start Bootstrap Template</title>
+    <title>Ver Producto</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Bootstrap icons-->
@@ -31,13 +31,14 @@
         <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
                 <!-- Product image-->
-                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{ product.image.url }}" alt="..." /></div>
+                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0 product.image" src="{{ product.image.url }}" id ="product-image"alt="..." /></div>
                 <div class="col-md-6">
                     <div class="small mb-1">SKU: BST-498</div>
-                    <h1 class="display-5 fw-bolder " class= 'product-title' id="product-title">{{ product.name }}</h1> 
+                    
+                    <h1 class="display-5 fw-bolder product-title">{{ product.name }}</h1>
                     {{ product.category }}   
-                    <input type="hidden" value={{product.name}} class="product-title" name="" id=""> 
-                    <input type="hidden" value={{product.price}} class="current-product-price" name="" id=""> 
+                    <input type="hidden" value={{product.name}} class="product-title" name="" id="product-title"> 
+                    <input type="hidden" value={{product.sale_price}} class="current-product-price" name="" id=""> 
                     <input type="hidden" value={{product.id}} class="product-id" name="" id="">
                     
                     <div class="fs-5 mb-5">
@@ -45,7 +46,7 @@
                         &nbsp;
                         <span class="current-product-price">${{ product.sale_price }}</span>
                     </div>
-                    <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium at dolorem quidem modi. Nam sequi consequatur obcaecati excepturi alias magni, accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?</p>
+                    <p class="lead">{{product.description}}</p>
                     <div class="d-flex">
                         <input class="form-control text-center me-3" id="product-quantity" type="num" value="1" style="max-width: 3rem" />
                         <button type="submit" id ="add-to-cart-btn" class="btn btn-outline-dark flex-shrink-0"> Añadir al carrito</button>
@@ -58,18 +59,18 @@
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
-                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0 " src="{{ product.image.url }}" alt="..." /></div>
+                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0 product-image " id ="product-image"  src="{{ product.image.url }}" alt="..." /></div>
                 <div class="col-md-6">
                     <div class="small mb-1">SKU: BST-498</div>
-                    <h1 class="display-5 fw-bolder " id="product-title">{{ product.name }}</h1> 
+                    <h1 class="display-5 fw-bolder product-title">{{ product.name }}</h1> 
                     {{ product.category }}   
-                    <input type="hidden" value={{product.name}} class="product-title" name="" id=""> 
+                    <input type="hidden" value={{product.name}} class="product-title" name="" id="product-title"> 
                     <input type="hidden" value={{product.price}} class="current-product-price" name="" id=""> 
                     <input type="hidden" value={{product.id}} class="product-id" name="" id="">
                     <div class="fs-5 mb-5">
                         <span class="current-product-price" id="product-price">${{ product.price }}</span>
                     </div>
-                    <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium at dolorem quidem modi. Nam sequi consequatur obcaecati excepturi alias magni, accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?</p>
+                    <p class="lead">{{product.description}}</p>
            
                     <div class="d-flex">   
                         <input class="form-control text-center me-3" id="product-quantity" type="num" value="1" style="max-width: 3rem" />
@@ -96,23 +97,26 @@
     <!-- Core theme JS-->
     <script src="{% static 'js/scripts.js' %} "></script>  
     
-  <button type="button" value ="{{product.id}}" class="btn btn-secondary" id= "add-cart"> Añadir al carrito</button>
+
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script> 
     $("#add-to-cart-btn").on("click",function(){  
-    let quantity = $("#product-quantity").val() 
-    let product_title=$(".product-title").val() 
-    let product_id=$(".product-id").val() 
-    let product_price=$(".current-product-price").text()  
-    let this_val=$(this)
+    let quantity = $("#product-quantity").val(); 
+    let product_title=$(".product-title").text(); 
+    let product_id=$(".product-id").val(); 
+    let product_price=$(".current-product-price").val() ; 
+    let product_image = $("#product-image").attr("src");
+    let this_val=$(this) 
+
 
 
     console.log("Quantity: ",quantity); 
     console.log("Title: ", product_title);  
     console.log("Price: ", product_price);  
-    console.log("ID: ",product_id)
+    console.log("ID: ",product_id);
     console.log("Current element: ", this_val);  
+    console.log("Image: ",product_image) ;
 
     $.ajax({ 
         url: '/add-to-cart' , 
@@ -120,7 +124,8 @@
             'id':product_id ,
             'qty':quantity ,
             'title':product_title, 
-            'price': product_price
+            'price': product_price,
+            'image':product_image
         }, 
         dataType: 'json' ,
         beforeSend: function(){ 
