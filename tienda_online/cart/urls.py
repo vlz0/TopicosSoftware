@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 
-from .views import CreateCheckoutSessionView, SuccessView
+from .views import CreateCheckoutSessionView, SuccessView, stripe_webhook
 
 urlpatterns = [
 
@@ -14,4 +14,5 @@ urlpatterns = [
 
     path('create-checkout-session/', CreateCheckoutSessionView.as_view(), name='create-checkout-session'),
     path('success/', SuccessView.as_view(), name='success'),
+    path('webhook/stripe/', stripe_webhook , name='stripe-webhook'),
 ]

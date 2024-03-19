@@ -3,12 +3,13 @@ from django.views import View
 from .cart import Cart
 from django.contrib import messages
 from tienda.models import Product
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.urls import reverse
 import stripe
+from django.views.decorators.csrf import csrf_exempt
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -135,7 +136,8 @@ class CreateCheckoutSessionView(View):
 
         # Crear una lista de productos para la sesión de pago de Stripe
         cart = request.session.get('cart_data_obj', {})
-        line_items = []
+        line_items = []  # Crear una lista de productos para la sesión de pago de Stripe
+        product_ids = []  # Crear una lista de IDs de productos para la metadata de Stripe
         for product_id, item in cart.items():
             line_items.append({
                 'price_data': {
@@ -148,6 +150,8 @@ class CreateCheckoutSessionView(View):
                 },
                 'quantity': item['qty'],
             })
+            # Agregar el ID del producto a la lista
+            product_ids.append(product_id)
 
         # Crear la sesión de pago de Stripe
         session = stripe.checkout.Session.create(
@@ -156,6 +160,9 @@ class CreateCheckoutSessionView(View):
             mode='payment',
             success_url=domain + reverse('success'),
             cancel_url=domain + reverse('home'),
+            metadata={
+                "stripe_product_ids": ",".join(product_ids),
+            }
         )
 
         # Devolver la ID de la sesión de pago de Stripe
@@ -166,3 +173,42 @@ class CreateCheckoutSessionView(View):
 
 class SuccessView(TemplateView):
     template_name = 'payment/success.html'
+
+
+@csrf_exempt
+def stripe_webhook(request, *args, **kwargst):
+
+    CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed'
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload,
+            sig_header,
+            endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        print(e)
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        print(e)
+        return HttpResponse(status=400)
+
+    # print(event)
+    # Handle the event checkout.session.completed
+    if event['type'] == CHECKOUT_SESSION_COMPLETED:
+        # print(event)
+        # Accedemos a los productos pagados
+        session_product_ids = event['data']['object']['metadata']['stripe_product_ids']
+        product_ids = session_product_ids.split(',')
+        print(product_ids)
+
+        # Fulfill the purchase...
+        # Logica para manejar la compra -> asignar a un cliente o realizar el envio . . .
+        pass
+
+    return HttpResponse(status=200)
