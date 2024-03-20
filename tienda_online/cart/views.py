@@ -164,7 +164,7 @@ class CreateCheckoutSessionView(View):
                 "stripe_product_ids": ",".join(product_ids),
             }
         )
-
+        messages.success(request, ("Pago Exitoso!"))
         # Devolver la ID de la sesión de pago de Stripe
         return JsonResponse({
             "id": session.id

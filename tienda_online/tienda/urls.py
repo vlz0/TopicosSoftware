@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path,include 
 from . import views 
-from .views import VRegistro
+from .views import VRegistro, ProductSearchListView
 
 urlpatterns = [
     path('', views.home,name='home'),  
@@ -10,4 +10,7 @@ urlpatterns = [
     path('register/', VRegistro.as_view(),name='register'), 
     path('product/<int:pk>', views.product,name='product'), 
     path('category/<str:foo>', views.category,name='category'),
+
+    path('search/', ProductSearchListView.as_view(), name='search'),
+
 ]

@@ -1,0 +1,28 @@
+<div class="container my-4">
+    <form method="GET" action="{% url 'search' %}">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <input class="form-control" type="search" name="q" placeholder="Buscar juego..." aria-label="Search">
+            </div>
+            <div class="col-md-auto">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Categorías
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="{% url 'home'%}">Todos los Productos</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="{% url 'category' 'Acción'%}">Acción</a></li>
+                        <li><a class="dropdown-item" href="{% url 'category' 'Aventura'%}">Aventura</a></li>
+                        <li><a class="dropdown-item" href="{% url 'category' 'RPG'%}">RPG</a></li>
+                        <li><a class="dropdown-item" href="{% url 'category' 'Carreras'%}">Carreras</a></li>
+                        <li><a class="dropdown-item" href="{% url 'category' 'Deportes'%}">Deportes</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-auto d-flex d-grid">
+                <button class="btn btn-outline-dark mt-auto" type="submit">Buscar</button>
+            </div>
+        </div>
+    </form>
+</div>
