@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views 
-from .views import VRegistro
+from .views import VRegistro, ProductSearchListView
 
 urlpatterns = [
     path('', views.home,name='home'),  
@@ -10,4 +10,7 @@ urlpatterns = [
     path('product/<int:pk>', views.product,name='product'),
     path('addProduct', views.addProduct,name='addProduct'), 
     path('category/<str:foo>', views.category,name='category'),
+
+    path('search/', ProductSearchListView.as_view(), name='search'),
+
 ]
