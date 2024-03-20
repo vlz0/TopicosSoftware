@@ -6,8 +6,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import View
 from .forms import *
-from django.db.models import Q
-from django.views.generic import ListView
+from .utils import ImageLocalStorage
+
+# Create your views here.
+
 
 def home(request):
     products = Product.objects.all()
@@ -29,11 +31,6 @@ def login_user(request):
             return redirect('home')
     else:
         return render(request, 'login.html', {})
-
-
-"""def register_user(request): 
-    return render(request,'register.html',{})
-"""
 
 
 def logout_user(request):
@@ -81,10 +78,26 @@ def category(request, foo):
         return redirect('home')
 
 
+def addProduct(request):
+    if request.method == 'POST':
+        form = addProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form2 = form.save(commit=False)
+            image_storage = ImageLocalStorage()
+            image_url = image_storage.store(request.FILES.get('image'))
+            form2.image = image_url
+            form2.save()
+            messages.success(
+                request, "Tu videojuego se ha puesto en venta exitosamente")
+            return redirect('home')
+    else:
+        form = addProductForm()
+    return render(request, 'addProduct.html', {'form': form})
+
 
 class ProductSearchListView(ListView):
     model = Product
-    template_name = 'home.html' 
+    template_name = 'home.html'
     context_object_name = 'products'
 
     def get_queryset(self):
@@ -94,7 +107,8 @@ class ProductSearchListView(ListView):
             keywords = query.split()
             keyword_queries = Q()
             for keyword in keywords:
-                keyword_queries |= Q(name__icontains=keyword) | Q(description__icontains=keyword)
+                keyword_queries |= Q(name__icontains=keyword) | Q(
+                    description__icontains=keyword)
             return Product.objects.filter(keyword_queries)
 
         return Product.objects.all()

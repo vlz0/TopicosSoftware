@@ -6,31 +6,28 @@
 <header class="bg-dark py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">Registrarse</h1>
-            <p class="lead fw-normal text-white-50 mb-0">Crea tu usuario ...</p>
+            <h1 class="display-4 fw-bolder">Vende tu videojuego</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Enseña todo sobre el juego...</p>
         </div>
     </div>
 </header> 
+
+<br/><br/>
 <div class="container"> 
     <div class="row"> 
         <center> 
             <div class="mb-3"> 
-                <form method="POST" action="{% url 'register' %}"> 
+                <form method="POST" enctype="multipart/form-data" action="{% url 'addProduct' %}"> 
                     {% csrf_token %}
                     <div style="width:30%; margin:auto;"> 
-                        <br/><br/> 
-                        {{ form|crispy }}   
-                        <br/>
-                        <button type="submit" class="btn btn-secondary">Registrarse</button>
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-secondary">Confirmar</button>
                     </div>
                 </form>
-                <br/><br/>  
-                <br/><br/>  
-                <br/><br/>  
-                <br/><br/>  
             </div> 
         </center> 
     </div> 
 </div>
+<br/>
+
 {% endblock %}
-<style>
