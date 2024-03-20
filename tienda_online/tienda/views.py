@@ -7,8 +7,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import View
 from .forms import *
 from .utils import ImageLocalStorage
-
-# Create your views here.
+from django.views.generic import ListView
+from django.db.models import Q
 
 
 def home(request):
