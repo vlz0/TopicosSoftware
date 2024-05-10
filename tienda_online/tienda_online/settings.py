@@ -25,10 +25,11 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-c-1y-m+*w&!sm502_*wdfbn5z8^*308!sxyt5nl+od(+p3b607')
+SECRET_KEY = os.getenv(
+    'SECRET_KEY', 'django-insecure-c-1y-m+*w&!sm502_*wdfbn5z8^*308!sxyt5nl+od(+p3b607')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Allowed hosts
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
@@ -87,8 +88,12 @@ WSGI_APPLICATION = 'tienda_online.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('MYSQL_DATABASE', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('MYSQL_USER', ''),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', ''),
+        'HOST': os.getenv('MYSQL_HOST', ''),
+        'PORT': os.getenv('MYSQL_PORT', '3306'),
     }
 }
 
@@ -130,9 +135,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = ['static/']
 
-MEDIA_URL='media/' 
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
-IMAGE_STORAGE_CLASS = 'tienda.utils.ImageLocalStorage' 
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+IMAGE_STORAGE_CLASS = 'tienda.utils.ImageLocalStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
