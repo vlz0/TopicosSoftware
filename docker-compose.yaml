@@ -21,6 +21,7 @@ services:
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
+             [ -f datadump.json ] && python manage.py loaddata datadump.json || echo 'No dump data found' &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./tienda_online:/app
