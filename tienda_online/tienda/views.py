@@ -9,6 +9,9 @@ from .forms import *
 from .utils import ImageLocalStorage
 from django.views.generic import ListView
 from django.db.models import Q
+from .models import Product
+from .serializers import ProductSerializer
+from rest_framework import generics
 
 
 def home(request):
@@ -112,3 +115,7 @@ class ProductSearchListView(ListView):
             return Product.objects.filter(keyword_queries)
 
         return Product.objects.all()
+
+class ProductListAPI(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer

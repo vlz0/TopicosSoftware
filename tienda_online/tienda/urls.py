@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views 
-from .views import VRegistro, ProductSearchListView
+from .views import VRegistro, ProductSearchListView, ProductListAPI
 
 urlpatterns = [
     path('', views.home,name='home'),  
@@ -12,5 +12,5 @@ urlpatterns = [
     path('category/<str:foo>', views.category,name='category'),
 
     path('search/', ProductSearchListView.as_view(), name='search'),
-
+    path('api/products/', ProductListAPI.as_view(), name='product-list-api'),
 ]
