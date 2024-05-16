@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Productos Aliados</h1>
+            <!-- Iterar sobre los datos recibidos de la API y mostrarlos -->
+            {% if data %}
+                <div class="row">
+                    {% for item in data %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <!-- Mostrar el nombre del juego -->
+                                <div class="card-body">
+                                    <h4 class="card-title">{{ item.name }}</h4>
+                                    <!-- Mostrar otros detalles del juego, si los hay -->
+                                    {% if item.release_date %}
+                                        <p class="card-text">Fecha de lanzamiento: {{ item.release_date }}</p>
+                                    {% endif %}
+                                    {% if item.platforms %}
+                                        <p class="card-text">Plataformas: {{ item.platforms }}</p>
+                                    {% endif %}
+                                    {% if item.rating %}
+                                        <p class="card-text">Rating: {{ item.rating }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Mensaje si no hay datos disponibles -->
+                <p>No hay datos disponibles.</p>
+            {% endif %}
+        </div>
+    </div>
+</header>
+{% endblock %}

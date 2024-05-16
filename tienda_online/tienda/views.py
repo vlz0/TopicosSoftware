@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import requests
 from .models import Product, Categoria
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -11,7 +12,8 @@ from django.views.generic import ListView
 from django.db.models import Q
 from .models import Product
 from .serializers import ProductSerializer
-from rest_framework import generics
+from rest_framework import generics 
+from requests import get
 
 
 def home(request):
@@ -118,4 +120,17 @@ class ProductSearchListView(ListView):
 
 class ProductListAPI(generics.ListAPIView):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = ProductSerializer 
+
+class AlianzaAPIView(View):
+    def get(self, request): 
+        return render(request, 'alianza.html', {}) 
+        #response = requests.get('URL_DE_LA_API_DE_LA_ALIANZA')
+
+        
+        """if response.status_code == 200:
+            data = response.json()
+            return render(request, 'alianza.html', {'data': data})
+        else:
+            
+            return render(request, 'error.html')"""
