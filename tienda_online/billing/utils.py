@@ -22,7 +22,7 @@ class PDFBillGenerator(BillGenerator):
         width, height = letter
 
         p.setFont("Helvetica-Bold", 16)
-        p.drawString(72, height - 72, "Factura de Compra")
+        p.drawString(72, height - 72, "Factura de Compra - TechVanguard")
         p.setFont("Helvetica", 12)
         p.drawString(72, height - 104, f"Cliente: {data['customer_name']}")
         p.drawString(72, height - 124,
@@ -35,8 +35,8 @@ class PDFBillGenerator(BillGenerator):
 
         for item in data['items']:
             y_position -= 20
-            p.drawString(100, y_position,
-                         f"{item['name']} - Precio: ${item['price']}")
+            product_details = f"{item['id']} - {item['name']} - Precio: ${item['price']}"
+            p.drawString(100, y_position, product_details)
             total += item['price']
 
         y_position -= 40
@@ -60,7 +60,7 @@ class PDFBillGenerator(BillGenerator):
         bill.pdf_file.save(filename, file_content)
         bill.save()
 
-        return bill.pdf_file.url
+        return bill.pdf_file.url, bill.id
 
     def download_bill(self, bill_id):
         return self.generate_bill({'amount': 100})

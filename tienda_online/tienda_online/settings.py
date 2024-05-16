@@ -146,6 +146,10 @@ IMAGE_STORAGE_CLASS = 'tienda.utils.ImageLocalStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
+
 # Crispy forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"

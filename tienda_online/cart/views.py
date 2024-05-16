@@ -12,6 +12,7 @@ import stripe
 from django.views.decorators.csrf import csrf_exempt
 from billing.utils import PDFBillGenerator, HTMLBillGenerator
 from billing.views import send_bill_email
+from billing.models import Bill
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -183,29 +184,6 @@ class CreateCheckoutSessionView(View):
             return JsonResponse({'error': str(e)}, status=500)
 
 
-class SuccessView(TemplateView):
-    template_name = 'payment/success.html'
-
-    def get(self, request, *args, **kwargs):
-        if 'cart_data_obj' in request.session:
-            # Limpiar el carrito despues de una compra exitosa
-            del request.session['cart_data_obj']
-            request.session.save()
-        messages.success(request, "Pago exitoso!")
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        purchased_items = self.request.session.pop('purchased_items', [])
-        if purchased_items:
-            context['purchased_items'] = purchased_items
-            self.request.session.save()  
-        else:
-            pass
-            messages.error(self.request, "No se encontraron detalles de productos comprados.")
-        return context
-
-
 @csrf_exempt
 def stripe_webhook(request, *args, **kwargst):
 
@@ -236,18 +214,13 @@ def stripe_webhook(request, *args, **kwargst):
         # Accedemos a los productos pagados
         session_product_ids = event['data']['object']['metadata']['stripe_product_ids']
         product_ids = session_product_ids.split(',')
-        print(product_ids)
 
         # Fulfill the purchase...
         # Logica para manejar la compra -> asignar a un cliente o realizar el envio o factura . . .
 
-        print("Productos pagados ID: ", event['data']['object']['metadata']['stripe_product_ids'])
-        print("Email del cliente: ", event['data']['object']['customer_details']['email'])
-        print("Nombre del cliente: ", event['data']['object']['customer_details']['name'])
-
         # Recuperar los productos de la base de datos
-        products = Product.objects.filter(id__in=product_ids).values('name', 'price')
-        items = [{'name': product['name'], 'price': product['price']} for product in products]
+        products = Product.objects.filter(id__in=product_ids).values('id','name', 'price')
+        items = [{'id': product['id'], 'name': product['name'], 'price': product['price']} for product in products]
 
         # Datos para la factura
         customer_name = event['data']['object']['customer_details']['name']
@@ -263,17 +236,67 @@ def stripe_webhook(request, *args, **kwargst):
 
         # Generate PDF report ....
         bill_pdf_generator = PDFBillGenerator()
-        file_url = bill_pdf_generator.generate_bill(bill_data)
-        print("Factura PDF generada correctamente: ", file_url)
-
+        file_url, bill_id = bill_pdf_generator.generate_bill(bill_data)
+        print("Factura PDF generada correctamente: ", file_url, "Bill ID:", bill_id)
+        request.session['bill_id'] = bill_id
+        request.session.modified = True
+        
         # Enviar email de factura
-        send_bill_email(customer_email, file_url)
-
+        send_bill_email(request, bill_id)
 
         # Generate HTML report ....
-        bill_html_generator = HTMLBillGenerator()
-        response_html = bill_html_generator.generate_bill({'amount': total_amount})
-        print("Factura HTML generada:", response_html)
+        # bill_html_generator = HTMLBillGenerator()
+        # response_html = bill_html_generator.generate_bill({'amount': total_amount})
+        # print("Factura HTML generada:", response_html)
         
 
     return HttpResponse(status=200)
+
+class SuccessView(TemplateView):
+    template_name = 'payment/success.html'
+    
+    def get(self, request, *args, **kwargs):
+        if 'cart_data_obj' in request.session:
+            # Limpiar el carrito despues de una compra exitosa
+            del request.session['cart_data_obj']
+            request.session.save()
+        messages.success(request, "Pago exitoso!")
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #bill_id = self.request.session.get('bill_id') 
+        # bill_id = self.request.session.pop('bill_id', None)  
+
+        # if bill_id :
+        #     context['bill_id'] = bill_id
+        #     
+        # else:
+        #     messages.error(self.request, "No se pudo encontrar el ID de la factura.")
+
+        last_bill = Bill.objects.last()  # traer la ultima factura creada
+        print ("Last bill:", last_bill)
+
+        if last_bill:
+            context['bill_id'] = last_bill.id
+            #messages.success(self.request, "Pago exitoso! Su factura está lista.")
+        else:
+            messages.error(self.request, "No se pudo encontrar el ID de la factura.")
+            context['error'] = "No se pudo encontrar el ID de la factura."
+
+
+        purchased_items = self.request.session.pop('purchased_items', [])
+        if purchased_items:
+            context['purchased_items'] = purchased_items
+            self.request.session.save()  
+        else:
+            pass
+            messages.error(self.request, "No se encontraron detalles de productos comprados.")
+        return context
+    
+
+def check_bill_ready(request):
+    last_bill = Bill.objects.last()
+    if last_bill and last_bill.pdf_file:  
+        return JsonResponse({'bill_id': last_bill.id})
+    return JsonResponse({'bill_id': None})

@@ -19,9 +19,15 @@
                 <p>No hay productos para mostrar.</p>
                 {% endfor %}
             </div>
-            <h3 class="fw-normal text-white-100 mt-5">Gracias por su compra</h3>
-            </br>
-            <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Volver a la tienda</a>
+            <h3 class="fw-normal text-white-100 mt-5">Gracias por su compra. Tu factura está lista para ser descargada:</h3>
+            <div class="mb-5">
+            {% if bill_id %}
+                <a href="{% url 'billing:download-bill' bill_id=bill_id %}" class="btn btn-outline-primary btn-lg">Descargar factura</a>
+            {% else %}
+                <p>No se encontró factura disponible.</p>
+            {% endif %}
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-lg">Volver a la tienda</a>
         </div>
     </div>
 </header>
