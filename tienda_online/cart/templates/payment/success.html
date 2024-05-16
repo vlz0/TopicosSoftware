@@ -1,28 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- Header-->
 <header class="bg-dark py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder text-success ">Compra Exitosa</h1>
+            <h1 class="display-4 fw-bolder text-success">Compra Exitosa</h1>
             <p class="lead fw-normal text-white-50 mb-0">Productos comprados:</p>
-            
-            
-            <p class="lead fw-normal text-white-50 mb-0">Gracias por su compra</p>
+            <div class="mt-4">
+                {% for item in purchased_items %}
+                <div class="card mb-3" style="background-color: rgba(255, 255, 255, 0.1);">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">{{ item.title }}</h5>
+                        <p class="card-text">Cantidad: {{ item.qty }}</p>
+                        <p class="card-text">Precio: ${{ item.price }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No hay productos para mostrar.</p>
+                {% endfor %}
+            </div>
+            <p class="lead fw-normal text-white-50 mt-5">Gracias por su compra</p>
             <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Volver a la tienda</a>
-
         </div>
     </div>
 </header>
-
-
-
 {% endblock %}
-
-
-
-
-
-
-
