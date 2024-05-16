@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv(
     'SECRET_KEY', 'django-insecure-c-1y-m+*w&!sm502_*wdfbn5z8^*308!sxyt5nl+od(+p3b607')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'False'
+DEBUG = os.getenv('DEBUG', 'True') == 'False'
 
 # Allowed hosts
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'cart',
+    'billing',
     'rest_framework',
 
 ]
