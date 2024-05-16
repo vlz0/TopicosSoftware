@@ -10,7 +10,8 @@ from django.conf import settings
 from django.urls import reverse
 import stripe
 from django.views.decorators.csrf import csrf_exempt
-
+from billing.utils import PDFBillGenerator, HTMLBillGenerator
+from billing.views import send_bill_email
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -153,7 +154,7 @@ class CreateCheckoutSessionView(View):
                         'name': item['title'],
                     },
                     # Stripe espera el monto en centavos
-                    'unit_amount': int(float(item['price']) * 100),
+                    'unit_amount': int(float(item[ 'price']) * 100),
                 },
                 'quantity': item['qty'],
             })
@@ -221,24 +222,58 @@ def stripe_webhook(request, *args, **kwargst):
         )
     except ValueError as e:
         # Invalid payload
-        print(e)
+        print("Error de valor: ", e)
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
         # Invalid signature
-        print(e)
+        print("Error de verificación de firma: ", e)
         return HttpResponse(status=400)
 
     # print(event)
     # Handle the event checkout.session.completed
     if event['type'] == CHECKOUT_SESSION_COMPLETED:
-        # print(event)
+        #print("Evento recibido: ", event) 
         # Accedemos a los productos pagados
         session_product_ids = event['data']['object']['metadata']['stripe_product_ids']
         product_ids = session_product_ids.split(',')
         print(product_ids)
 
         # Fulfill the purchase...
-        # Logica para manejar la compra -> asignar a un cliente o realizar el envio . . .
-        pass
+        # Logica para manejar la compra -> asignar a un cliente o realizar el envio o factura . . .
+
+        print("Productos pagados ID: ", event['data']['object']['metadata']['stripe_product_ids'])
+        print("Email del cliente: ", event['data']['object']['customer_details']['email'])
+        print("Nombre del cliente: ", event['data']['object']['customer_details']['name'])
+
+        # Recuperar los productos de la base de datos
+        products = Product.objects.filter(id__in=product_ids).values('name', 'price')
+        items = [{'name': product['name'], 'price': product['price']} for product in products]
+
+        # Datos para la factura
+        customer_name = event['data']['object']['customer_details']['name']
+        customer_email = event['data']['object']['customer_details']['email']
+        total_amount = event['data']['object']['amount_total'] / 100  # Convertir de centavos a dólares
+
+        bill_data = {
+            'customer_name': customer_name,
+            'customer_email': customer_email,
+            'items': items,
+            'total_amount': total_amount
+        }
+
+        # Generate PDF report ....
+        bill_pdf_generator = PDFBillGenerator()
+        file_url = bill_pdf_generator.generate_bill(bill_data)
+        print("Factura PDF generada correctamente: ", file_url)
+
+        # Enviar email de factura
+        send_bill_email(customer_email, file_url)
+
+
+        # Generate HTML report ....
+        bill_html_generator = HTMLBillGenerator()
+        response_html = bill_html_generator.generate_bill({'amount': total_amount})
+        print("Factura HTML generada:", response_html)
+        
 
     return HttpResponse(status=200)
