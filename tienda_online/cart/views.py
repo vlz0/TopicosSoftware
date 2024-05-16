@@ -128,16 +128,23 @@ def update_cart(request):
 
 class CreateCheckoutSessionView(View):
     def post(self, request, *args, **kwargs):
-
-        # Dominio de la aplicación o localhost si no hay un dominio configurado
-        domain = 'https://' + settings.ALLOWED_HOSTS[0]
-        if settings.DEBUG:
-            domain = 'http://127.0.0.1:8000'
-
         # Crear una lista de productos para la sesión de pago de Stripe
         cart = request.session.get('cart_data_obj', {})
+
+        if not cart:  # Verificar si el carrito está vacío
+            messages.error(request, "Tu carrito está vacío.")
+            return JsonResponse({'error': 'Tu carrito está vacío.'}, status=400)
+
+        # Dominio de la aplicación o localhost si no hay un dominio configurado
+        # domain = 'https://' + settings.ALLOWED_HOSTS[0]
+        # if settings.DEBUG:
+        #     domain = 'http://127.0.0.1:8080'
+
+        domain = 'http://' + request.get_host()
+
         line_items = []  # Crear una lista de productos para la sesión de pago de Stripe
-        product_ids = []  # Crear una lista de IDs de productos para la metadata de Stripe
+        #product_ids = []  # Crear una lista de IDs de productos para la metadata de Stripe
+        purchased_items = []
         for product_id, item in cart.items():
             line_items.append({
                 'price_data': {
@@ -151,28 +158,51 @@ class CreateCheckoutSessionView(View):
                 'quantity': item['qty'],
             })
             # Agregar el ID del producto a la lista
-            product_ids.append(product_id)
-
-        # Crear la sesión de pago de Stripe
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=line_items,
-            mode='payment',
-            success_url=domain + reverse('success'),
-            cancel_url=domain + reverse('home'),
-            metadata={
-                "stripe_product_ids": ",".join(product_ids),
-            }
-        )
-        messages.success(request, ("Pago Exitoso!"))
-        # Devolver la ID de la sesión de pago de Stripe
-        return JsonResponse({
-            "id": session.id
-        })
+            # product_ids.append(product_id)
+            purchased_items.append({  # Agregar detalles del producto a la lista
+                'title': item['title'],
+                'qty': item['qty'],
+                'price': item['price']
+            })
+        try:
+            # Crear la sesión de pago de Stripe
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=line_items,
+                mode='payment',
+                success_url=domain + reverse('success'),
+                cancel_url=domain + reverse('home'),
+                metadata={
+                    "stripe_product_ids": ",".join(cart.keys())},
+            )
+            request.session['purchased_items'] = purchased_items
+            # Devolver la ID de la sesión de pago de Stripe
+            return JsonResponse({"id": session.id})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
 
 class SuccessView(TemplateView):
     template_name = 'payment/success.html'
+
+    def get(self, request, *args, **kwargs):
+        if 'cart_data_obj' in request.session:
+            # Limpiar el carrito despues de una compra exitosa
+            del request.session['cart_data_obj']
+            request.session.save()
+        messages.success(request, "Pago exitoso!")
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        purchased_items = self.request.session.pop('purchased_items', [])
+        if purchased_items:
+            context['purchased_items'] = purchased_items
+            self.request.session.save()  
+        else:
+            pass
+            messages.error(self.request, "No se encontraron detalles de productos comprados.")
+        return context
 
 
 @csrf_exempt
