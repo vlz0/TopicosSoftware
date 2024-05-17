@@ -4,7 +4,7 @@
 
 
 <main class ="cart-list" id="cart-list">
-<section class="h-100 gradient-custom">
+<section class="h-100 style="background-color: #b0b0b0;">
     <div class="container py-5">
         <div class="row d-flex justify-content-center my-4">
             <div class="col-md-8">
@@ -49,17 +49,17 @@
                                         {% csrf_token %}
                                         <!-- Aquí va el resto del código de tu producto -->
                                     
-                                        <div class="d-flex mb-4 align-items-center" style="max-width: 300px; margin-left: -30px;">
-                                            <button type="submit" name="action" value="subtract" class="btn btn-primary px-3 me-2 minus-btn">
+                                        <div class="d-flex mb-4 align-items-center" style="max-width: 300px;">
+                                            <button type="submit" name="action" value="subtract" class="btn btn-primary px-2 minus-btn">
                                                 <i class="fas fa-minus"></i>
                                             </button>
                                     
                                             <input type="hidden" name="product_id" value="{{ product_id }}">
                                             <div class="form-outline">
-                                                <input min="0" name="product_qty" value="{{ item.qty }}" type="number" id="product-qty" class="product-qty" />
+                                                <input min="0" name="product_qty" value="{{ item.qty }}" type="number" id="product-qty" class="product-qty form-control text-center" />
                                             </div>
                                     
-                                            <button type="submit" name="action" value="add" class="btn btn-primary px-3 ms-2">
+                                            <button type="submit" name="action" value="add" class="btn btn-success px-2 plus-btn">
                                                 <i class="fas fa-plus"></i>
                                             </button> 
                                         
@@ -75,7 +75,7 @@
                                 <div>
                                     <button type="button" class="btn btn-danger btn-sm mb-2 delete-btn" 
                                         data-mdb-toggle="tooltip" title="Remove item" data-product={{product_id}} id="delete-btn">
-                                        <i class="fas fa-trash"></i> Eliminarr Artículo
+                                        <i class="fas fa-trash"></i> Eliminar Artículo
                                     </button> 
                                 
                                 </div>
@@ -114,9 +114,9 @@
                             </li>
                         </ul>
 
-                        <button type="button" class="btn btn-primary btn-lg btn-block">
+                        {% comment %} <button type="button" class="btn btn-primary btn-lg btn-block">
                             Ir al checkout
-                        </button>
+                        </button> {% endcomment %}
                     </div>
                 </div>
                 <div class="card mb-4 mb-lg-0">

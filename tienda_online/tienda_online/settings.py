@@ -39,6 +39,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.techvanguard.rentevo.site'
 ]
 
+#SECURE_SSL_REDIRECT = True
+
 # Application definition
 
 INSTALLED_APPS = [
