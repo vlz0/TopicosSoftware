@@ -142,7 +142,7 @@ class CreateCheckoutSessionView(View):
         # if settings.DEBUG:
         #     domain = 'http://127.0.0.1:8080'
 
-        domain = 'http://' + request.get_host()
+        domain = 'https://' + request.get_host()
 
         line_items = []  # Crear una lista de productos para la sesión de pago de Stripe
         #product_ids = []  # Crear una lista de IDs de productos para la metadata de Stripe

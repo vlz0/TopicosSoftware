@@ -34,6 +34,11 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 # Allowed hosts
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://techvanguard.rentevo.site',
+    'https://www.techvanguard.rentevo.site'
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -146,9 +151,9 @@ IMAGE_STORAGE_CLASS = 'tienda.utils.ImageLocalStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 
 # Crispy forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
