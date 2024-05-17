@@ -13,7 +13,9 @@ from django.db.models import Q
 from .models import Product
 from .serializers import ProductSerializer
 from rest_framework import generics 
-from requests import get
+from requests import get 
+from django.views.generic import TemplateView
+from .utils import get_allied_brands
 
 
 def home(request):
@@ -122,15 +124,14 @@ class ProductListAPI(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer 
 
-class AlianzaAPIView(View):
-    def get(self, request): 
-        return render(request, 'alianza.html', {}) 
-        #response = requests.get('URL_DE_LA_API_DE_LA_ALIANZA')
 
-        
-        """if response.status_code == 200:
-            data = response.json()
-            return render(request, 'alianza.html', {'data': data})
-        else:
-            
-            return render(request, 'error.html')"""
+  # Asumiendo que has puesto la función en un archivo utils.py
+
+class AlliedBrandsView(TemplateView):
+    template_name = 'alianza.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        brands = get_allied_brands()
+        context['brands'] = brands
+        return context

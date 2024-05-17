@@ -7,12 +7,19 @@ Este proyecto realizado en su totalidad por:
 - [@Santiago Gallego Quintero](https://github.com/sgalle16)
 - [@Daniel Vélez Duque](https://www.github.com/vlz0)
 
+### Entrega 1
 El primer entregable se encuentra en el siguiente [link](https://docs.google.com/document/d/1j7xXonnmy5WLn521ADpP2ZK9_SSZB4eBQycMDLRqlPQ/edit?usp=sharing)
+
+### Entrega 2
+Visitar la [Wiki del proyecto](https://github.com/vlz0/TopicosSoftware/wiki)  para los detalles de la entrega 2 
+
+
 #
 Reglas para controladores:
 - Cada controlador debe tener un nombre descriptivo que represente su función.
 - Los controladores deben ser lo más concisos posible.
 - Se debe evitar la lógica compleja en los controladores.
+
 
 Reglas para modelos:
 - Los nombres de los modelos deben estar en singular.
