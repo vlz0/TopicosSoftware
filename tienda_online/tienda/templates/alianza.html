@@ -5,26 +5,16 @@
 <header class="bg-dark py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">Productos Aliados</h1>
+            <h1 class="display-4 fw-bolder">Marcas Aliadas</h1>
             
-            {% if data %}
+            {% if brands %}
                 <div class="row">
-                    {% for item in data %}
+                    {% for brand in brands %}
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="card h-100">
-                                <!-- Mostrar el nombre del juego -->
-                                <div class="card-body">
-                                    <h4 class="card-title">{{ item.name }}</h4>
-                                    <!-- Mostrar otros detalles del juego, si los hay -->
-                                    {% if item.release_date %}
-                                        <p class="card-text">Fecha de lanzamiento: {{ item.release_date }}</p>
-                                    {% endif %}
-                                    {% if item.platforms %}
-                                        <p class="card-text">Plataformas: {{ item.platforms }}</p>
-                                    {% endif %}
-                                    {% if item.rating %}
-                                        <p class="card-text">Rating: {{ item.rating }}</p>
-                                    {% endif %}
+                                
+                                <div class="card-body text-dark"> 
+                                    <h4 class="card-title">{{ brand.name }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +22,7 @@
                 </div>
             {% else %}
                 <!-- Mensaje si no hay datos disponibles -->
-                <p>No hay datos disponibles.</p>
+                <p>No hay marcas aliadas disponibles.</p>
             {% endif %}
         </div>
     </div>
